@@ -9,6 +9,7 @@ class page extends StatefulWidget {
 class _pageState extends State<page> {
   GlobalKey<FormState> _key = GlobalKey();
   bool _autovalidate = false;
+  bool _passwordVisibility = true;
   String names, email, mobile, collegeName, password;
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _pageState extends State<page> {
                     inputfieldtype: "Password",
                     icons: Icon(Icons.mail_outline),
                     inputVar: (input) => this.email = input,
-                    obscure: true),
+                    obscure: _passwordVisibility),
                 buildLoginTile(
                     inputfieldtype: "Email",
                     icons: Icon(Icons.mail_outline),
@@ -88,6 +89,12 @@ class _pageState extends State<page> {
     );
   }
 
+  void _turnVisibility() {
+    setState(() {
+      this._passwordVisibility = !this._passwordVisibility;
+    });
+  }
+
   _sendtonextscreen() {
     if (_key.currentState.validate()) {
       _key.currentState.save();
@@ -121,14 +128,19 @@ class _pageState extends State<page> {
       title: TextFormField(
         validator: (input) {
           return input.isEmpty ? 'Enter $inputfieldtype' : null;
-          // if (input.isEmpty) {
-          //   return 'enter $inputfieldtype';
-          // }
         },
         obscureText: obscure,
         decoration: InputDecoration(
           labelText: inputfieldtype,
           icon: icons,
+          suffixIcon: inputfieldtype == "Password"
+              ? IconButton(
+                  icon: _passwordVisibility == true
+                      ? Icon(Icons.visibility_off)
+                      : Icon(Icons.visibility),
+                  onPressed: () => this._turnVisibility(),
+                )
+              : null,
         ),
         onSaved: inputVar,
       ),
